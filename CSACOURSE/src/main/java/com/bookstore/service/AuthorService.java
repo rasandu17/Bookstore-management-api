@@ -2,6 +2,7 @@ package com.bookstore.service;
 
 import com.bookstore.model.Author;
 import com.bookstore.exception.AuthorNotFoundException;
+import com.bookstore.exception.InvalidInputException;  // Importing InvalidInputException
 
 import java.util.*;
 
@@ -12,6 +13,11 @@ public class AuthorService {
 
     // Add a new author
     public Author addAuthor(Author author) {
+        // Input validation using InvalidInputException
+        if (author == null || author.getName() == null || author.getName().trim().isEmpty()) {
+            throw new InvalidInputException("name", "Author name is required.");
+        }
+
         author.setAuthorId(nextAuthorId++);
         authorData.put(author.getAuthorId(), author);
         return author;
@@ -33,6 +39,11 @@ public class AuthorService {
 
     // Update an author
     public Author updateAuthor(int id, Author updatedAuthor) {
+        // Input validation using InvalidInputException
+        if (updatedAuthor == null || updatedAuthor.getName() == null || updatedAuthor.getName().trim().isEmpty()) {
+            throw new InvalidInputException("name", "Author name is required.");
+        }
+
         if (!authorData.containsKey(id)) {
             throw new AuthorNotFoundException(id);
         }

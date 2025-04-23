@@ -3,6 +3,7 @@ package com.bookstore.resource;
 import com.bookstore.model.Author;
 import com.bookstore.model.Book;
 import com.bookstore.exception.AuthorNotFoundException;
+import com.bookstore.exception.InvalidInputException;  // Importing InvalidInputException
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -22,6 +23,10 @@ public class AuthorResource {
     // Add a new author
     @POST
     public Response addAuthor(Author author) {
+        // Input validation using InvalidInputException
+        if (author == null || author.getName() == null || author.getName().trim().isEmpty()) {
+            throw new InvalidInputException("name", "Author name is required.");
+        }
         author.setAuthorId(nextAuthorId++);
         authorData.put(author.getAuthorId(), author);
         return Response.status(Response.Status.CREATED).entity(author).build();
@@ -49,6 +54,11 @@ public class AuthorResource {
     @PUT
     @Path("/{id}")
     public Response updateAuthor(@PathParam("id") int id, Author updatedAuthor) {
+        // Input validation using InvalidInputException
+        if (updatedAuthor == null || updatedAuthor.getName() == null || updatedAuthor.getName().trim().isEmpty()) {
+            throw new InvalidInputException("name", "Author name is required.");
+        }
+
         Author existing = authorData.get(id);
         if (existing == null) {
             throw new AuthorNotFoundException(id);

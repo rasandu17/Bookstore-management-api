@@ -2,6 +2,7 @@ package com.bookstore.resource;
 
 import com.bookstore.model.Book;
 import com.bookstore.exception.BookNotFoundException;
+import com.bookstore.exception.InvalidInputException;  // Importing InvalidInputException
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -12,7 +13,6 @@ import java.util.*;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BookResource {
 
-
     private static Map<Integer, Book> bookData = new HashMap<>();
     private static int nextId = 1;
 
@@ -20,10 +20,17 @@ public class BookResource {
         return bookData;
     }
 
-
     // Add a new book
     @POST
     public Response addBook(Book book) {
+        // Input validation using InvalidInputException
+        if (book == null || book.getTitle() == null || book.getTitle().trim().isEmpty()) {
+            throw new InvalidInputException("title", "Book title is required.");
+        }
+        if (book.getAuthor() == null || book.getAuthor().trim().isEmpty()) {
+            throw new InvalidInputException("author", "Author name is required.");
+        }
+
         book.setBookId(nextId++);
         bookData.put(book.getBookId(), book);
         return Response.status(Response.Status.CREATED).entity(book).build();
@@ -51,6 +58,14 @@ public class BookResource {
     @PUT
     @Path("/{id}")
     public Response updateBook(@PathParam("id") int id, Book newBook) {
+        // Input validation using InvalidInputException
+        if (newBook == null || newBook.getTitle() == null || newBook.getTitle().trim().isEmpty()) {
+            throw new InvalidInputException("title", "Book title is required.");
+        }
+        if (newBook.getAuthor() == null || newBook.getAuthor().trim().isEmpty()) {
+            throw new InvalidInputException("author", "Author name is required.");
+        }
+
         Book existing = bookData.get(id);
         if (existing == null) {
             throw new BookNotFoundException(id);
