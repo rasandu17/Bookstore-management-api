@@ -7,6 +7,8 @@ public class Customer {
     private String password;
 
 
+    public Customer() {
+    }
     public Customer(int customerId, String name, String email, String password) {
         this.customerId = customerId;
         this.name = name;

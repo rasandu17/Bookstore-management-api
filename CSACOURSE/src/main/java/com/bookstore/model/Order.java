@@ -11,6 +11,8 @@ public class Order {
     private List<OrderItem> orderItems;
 
 
+    public Order() {
+    }
     public Order(int orderId, int customerId, Date orderDate, double totalAmount, List<OrderItem> orderItems) {
         this.orderId = orderId;
         this.customerId = customerId;
