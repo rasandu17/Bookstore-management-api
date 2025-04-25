@@ -2,13 +2,13 @@ package com.bookstore.resource;
 
 import com.bookstore.model.Cart;
 import com.bookstore.model.CartItem;
-import com.bookstore.exception.CustomerNotFoundException;
+import com.bookstore.exception.CartNotFoundException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
 
-@Path("/carts")
+@Path("/cart")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CartResource {
@@ -34,7 +34,7 @@ public class CartResource {
     public Response getCart(@PathParam("customerId") int customerId) {
         Cart cart = cartData.get(customerId);
         if (cart == null) {
-            throw new CustomerNotFoundException(customerId);
+            throw new CartNotFoundException(customerId);
         }
         return Response.ok(cart).build();
     }
@@ -47,7 +47,7 @@ public class CartResource {
                                        @QueryParam("quantity") int quantity) {
         Cart cart = cartData.get(customerId);
         if (cart == null) {
-            throw new CustomerNotFoundException(customerId);
+            throw new CartNotFoundException(customerId);
         }
         cart.updateItemQuantity(bookId, quantity);
         return Response.ok(cart).build();
@@ -60,7 +60,7 @@ public class CartResource {
                                        @PathParam("bookId") int bookId) {
         Cart cart = cartData.get(customerId);
         if (cart == null) {
-            throw new CustomerNotFoundException(customerId);
+            throw new CartNotFoundException(customerId);
         }
         cart.removeItem(bookId);
         return Response.noContent().build();
@@ -72,7 +72,7 @@ public class CartResource {
     public Response clearCart(@PathParam("customerId") int customerId) {
         Cart cart = cartData.get(customerId);
         if (cart == null) {
-            throw new CustomerNotFoundException(customerId);
+            throw new CartNotFoundException(customerId);
         }
         cart.clearCart();
         return Response.noContent().build();

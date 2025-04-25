@@ -7,7 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
 
-@Path("/customers")
+@Path("/customer")  // Changed from "/customers" to "/customer"
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CustomerResource {

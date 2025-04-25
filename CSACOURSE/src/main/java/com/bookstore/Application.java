@@ -7,8 +7,6 @@ import javax.ws.rs.ApplicationPath;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
 @ApplicationPath("/api")
 public class Application extends javax.ws.rs.core.Application {
 
@@ -24,18 +22,18 @@ public class Application extends javax.ws.rs.core.Application {
         classes.add(CustomerResource.class);
         classes.add(OrderResource.class);
 
-        // Add exception mapper classes
-        // These handle errors and convert them to nice HTTP responses
-        classes.add(ExceptionMappers.class);
+        // Add exception mapper classes individually
+        classes.add(ExceptionMappers.AuthorNotFoundExceptionMapper.class);
+        classes.add(ExceptionMappers.BookNotFoundExceptionMapper.class);
+        classes.add(ExceptionMappers.CartNotFoundExceptionMapper.class);
+        classes.add(ExceptionMappers.CustomerNotFoundExceptionMapper.class);
+        classes.add(ExceptionMappers.OrderNotFoundExceptionMapper.class);
+        classes.add(ExceptionMappers.InvalidInputExceptionMapper.class);
+        classes.add(ExceptionMappers.OutOfStockExceptionMapper.class);
+        classes.add(ExceptionMappers.GenericExceptionMapper.class);
 
-        // These are our custom exceptions
-        classes.add(AuthorNotFoundException.class);
-        classes.add(BookNotFoundException.class);
-        classes.add(CartNotFoundException.class);
-        classes.add(CustomerNotFoundException.class);
-        classes.add(OrderNotFoundException.class);
-        classes.add(InvalidInputException.class);
-        classes.add(OutOfStockException.class);
+        // No need to register exception classes themselves
+        // as they are not JAX-RS components
 
         return classes;
     }
