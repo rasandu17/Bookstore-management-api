@@ -1,0 +1,12 @@
+[
+  {
+    "authorId": 1,
+    "name": "J.K. Rowling",
+    "biography": "Author of the Harry Potter series."
+  },
+  {
+    "authorId": 2,
+    "name": "George R.R. Martin",
+    "biography": "Author of A Song of Ice and Fire."
+  }
+]

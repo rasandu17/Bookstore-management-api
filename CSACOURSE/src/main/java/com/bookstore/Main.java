@@ -10,39 +10,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
-    // Base URI the Grizzly HTTP server will listen on
     private static final String BASE_URI = "http://localhost:";
     private static final int DEFAULT_PORT = 8080;
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
+        // Suppress verbose logging from Jersey/Grizzly
+        Logger.getLogger("org.glassfish").setLevel(Level.SEVERE);
+        Logger.getLogger("org.glassfish.grizzly").setLevel(Level.SEVERE);
+        Logger.getLogger("org.glassfish.jersey").setLevel(Level.SEVERE);
+
         try {
-            // Get port from environment variable or use default
             int port = getPort();
+            URI baseUri = UriBuilder.fromUri(BASE_URI + port ).build();
 
-            // Fix: Create a proper URI with path component to avoid default port 80 binding
-            URI baseUri = UriBuilder.fromUri(BASE_URI + port + "/api").build();
-
-            // Create resource configuration with the Application
             ResourceConfig config = ResourceConfig.forApplicationClass(Application.class);
+            config.property("jersey.config.server.wadl.disableWadl", true); // Disable WADL
 
-            // Create and start HTTP server
             HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, config);
 
-            LOGGER.info("BookStore API started with WADL available at " +
-                    baseUri + "application.wadl");
-            LOGGER.info("Server started on port " + port);
-            LOGGER.info("Press CTRL+C to stop the server...");
+            LOGGER.info("Server started at " + baseUri);
 
-            // Add shutdown hook
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 LOGGER.info("Shutting down server...");
                 server.shutdownNow();
                 LOGGER.info("Server stopped");
             }));
 
-            // Keep the server running until terminated
-            Thread.currentThread().join();
+            Thread.currentThread().join(); // Keep server running
 
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Server failed to start", ex);
@@ -50,13 +45,12 @@ public class Main {
         }
     }
 
-
     private static int getPort() {
         String port = System.getenv("PORT");
         try {
             return port != null ? Integer.parseInt(port) : DEFAULT_PORT;
         } catch (NumberFormatException e) {
-            LOGGER.warning("Invalid PORT environment variable value: " + port + ". Using default port: " + DEFAULT_PORT);
+            LOGGER.warning("Invalid PORT environment variable: " + port + ". Using default port: " + DEFAULT_PORT);
             return DEFAULT_PORT;
         }
     }

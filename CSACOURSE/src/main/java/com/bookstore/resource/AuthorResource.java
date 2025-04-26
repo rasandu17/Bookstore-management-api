@@ -3,11 +3,13 @@ package com.bookstore.resource;
 import com.bookstore.model.Author;
 import com.bookstore.model.Book;
 import com.bookstore.exception.AuthorNotFoundException;
-import com.bookstore.exception.InvalidInputException;  // Importing InvalidInputException
+import com.bookstore.exception.InvalidInputException;
+import com.bookstore.DataLoader;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/authors")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,6 +21,15 @@ public class AuthorResource {
 
     // Simulating access to book data from BookResource
     private static Map<Integer, Book> bookData = BookResource.getBookData();
+
+    static {
+        // Preload authors from DataLoader
+        List<Author> preloadedAuthors = DataLoader.getAuthors();
+        for (Author author : preloadedAuthors) {
+            author.setAuthorId(nextAuthorId++);
+            authorData.put(author.getAuthorId(), author);
+        }
+    }
 
     // Add a new author
     @POST
@@ -89,12 +100,9 @@ public class AuthorResource {
             throw new AuthorNotFoundException(id);
         }
 
-        List<Book> booksByAuthor = new ArrayList<>();
-        for (Book book : bookData.values()) {
-            if (book.getAuthor().equalsIgnoreCase(author.getName())) {
-                booksByAuthor.add(book);
-            }
-        }
+        List<Book> booksByAuthor = bookData.values().stream()
+                .filter(book -> book.getAuthor().equalsIgnoreCase(author.getName()))
+                .collect(Collectors.toList());
 
         return Response.ok(booksByAuthor).build();
     }
